@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đèn kéo quân</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #111;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        p.note {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        /* Vùng nhìn đèn, có hiệu ứng phối cảnh */
+        #stage {
+            width: 320px;
+            height: 240px;
+            perspective: 900px;
+            margin-top: 20px;
+        }
+
+        /* Khối đèn quay  */
+        #carousel {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        #carousel img {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 2px solid #fff;
+            backface-visibility: hidden;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <h1>Đèn kéo quân</h1>
+
+    <div id="stage">
+        <div id="carousel">
+            
+            <img src="image1.jpg" alt="Mặt 1">
+            <img src="image2.jpg" alt="Mặt 2">
+            <img src="image3.jpg" alt="Mặt 3">
+            <img src="image4.jpg" alt="Mặt 4">
+            <img src="image5.jpg" alt="Mặt 5">
+            <img src="image6.jpg" alt="Mặt 6">
+        </div>
+    </div>
+
+    <p class="note">
+        rê chuột vào một hình để tạm dừng, rê ra để quay tiếp.
+    </p>
+
+    <script>
+        window.addEventListener("load", function () {
+            var carousel = document.getElementById("carousel");
+            var images = carousel.querySelectorAll("img");
+
+            var panelCount = images.length;
+            var angleStep = 360 / panelCount;
+            var radius = 300; // bán kính trống đèn
+
+            // Sắp xếp 6 mặt quanh trục đứng
+            for (var i = 0; i < panelCount; i++) {
+                var angle = i * angleStep;
+                images[i].style.transform =
+                    "translate(-50%, -50%) rotateY(" + angle + "deg) translateZ(" + radius + "px)";
+            }
+
+            var currentAngle = 0;
+            var speed = 0.4;     // tốc độ quay, độ mỗi lần cập nhật
+            var timerId = null;  // id của setInterval
+
+            function rotate() {
+                currentAngle = (currentAngle + speed) % 360;
+                carousel.style.transform = "rotateY(" + currentAngle + "deg)";
+            }
+
+            function startRotation() {
+                if (!timerId) {
+                    timerId = setInterval(rotate, 30); // 30 mili giây cập nhật một lần
+                }
+            }
+
+            function stopRotation() {
+                if (timerId) {
+                    clearInterval(timerId);
+                    timerId = null;
+                }
+            }
+
+            // Rê chuột vào bất kỳ mặt nào thì dừng, rê ra quay tiếp
+            for (var j = 0; j < images.length; j++) {
+                images[j].addEventListener("mouseenter", stopRotation);
+                images[j].addEventListener("mouseleave", startRotation);
+            }
+
+            // Bắt đầu quay
+            startRotation();
+        });
+    </script>
+</body>
+</html>
